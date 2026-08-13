@@ -4,7 +4,7 @@ Baza wiedzy, skrypty, ściągawki i notatki z TryHackMe (**SOC L2**, **AI Securi
 
 ---
 
-## 🗺️ Ścieżka SOC Level 2 — Moduły i Postępy
+## 🗺️ Nowa Ścieżka SOC Level 2 (TryHackMe 2026) — Moduły i Postępy
 
 - [x] **01. Wprowadzenie do poziomu SOC 2**
 - [ ] **02. Zaawansowany Splunk**
