@@ -1,34 +1,22 @@
-# 🛡️ CyberSec-Knowledge-Base
+# Case Study: AWS VPC Connection Timeout Troubleshooting
 
-Baza wiedzy, skrypty, ściągawki i notatki z TryHackMe (**SOC L2**, **AI Security**, **Security Engineer**).
+## Opis problemu (The Incident)
+Wystąpienie błędu `ERR_CONNECTION_TIMED_OUT` podczas próby połączenia z instancją EC2 wystawioną w publicznym podsieci customowego VPC, mimo posiadania publicznego adresu IP.
 
----
+## Święta Trójca Diagnostyki Sieciowej (Root Cause Checklist)
 
-## 🗺️ Nowa Ścieżka SOC Level 2 (TryHackMe 2026) — Moduły i Postępy
+1. **Route Table (Tabela routingu)**
+   - *Problem:* Podsieć nie ma zdefiniowanej trasy wyjściowej do świata.
+   - *Fix:* Sprawdź, czy przypisana tabela routingu zawiera wpis:
+     - Destination: `0.0.0.0/0`
+     - Target: ID Twojego Internet Gateway (`igw-xxxxxxxx`)
 
-- [x] **01. Wprowadzenie do poziomu SOC 2**
-- [ ] **02. Zaawansowany Splunk**
-- [ ] **03. Zaawansowany Elastic (Elastic Stack)**
-- [ ] **04. Active Directory dla SOC**
-- [ ] **05. Microsoft 365 / Entra ID dla SOC**
-- [ ] **06. Bezpieczeństwo Chmury dla SOC (AWS)**
-- [ ] **07. Inżynieria Wykrywania (Detection Engineering)**
-- [ ] **08. Polowanie na Zagrożenia (Threat Hunting)**
-- [ ] **09. Emulacja Zagrożeń (Threat Emulation)**
-- [ ] **10. Cykl Życia Reagowania na Incydenty (IR)**
-- [ ] **11. Cyber Threat Intelligence (CTI)**
-- [ ] **12. Zaawansowana Analiza Ruchu Sieciowego**
-- [ ] **13. Statyczna Analiza Złośliwego Oprogramowania (Malware Analysis)**
-- [ ] **14. Wazuh & Osquery dla SOC i GRC**
-- [ ] **15. Wyzwania Końcowe Poziomu SOC 2 (Final Challenges)**
+2. **Internet Gateway (IGW)**
+   - *Problem:* Bramka internetowa istnieje, ale nie jest podpięta do VPC.
+   - *Fix:* Zweryfikuj status IGW w konsoli. Musi mieć status `Attached` do konkretnego `app-vpc`.
 
----
-
-## 🛠️ Narzędzia i Technologie
-* **SIEM / EDR:** Elastic, Splunk, Wazuh
-* **Analiza Sieci:** Wireshark, TShark
-* **Windows & Forensics:** Sysmon, KAPE, Event Viewer, PowerShell
-* **AI & Inne:** YARA, Sigma Rules, Python, Bash
-
----
-> 📌 *Repozytorium jest aktualizowane na bieżąco podczas wykonywania kolejnych labów.*
+3. **Firewall (Security Groups & NACL)**
+   - *Problem:* Ruch jest blokowany na poziomie zapory sieciowej.
+   - *Fix:* 
+     - Sprawdź reguły *Inbound* w **Security Group** przypisanej do EC2 (musi przepuszczać port 80/443 z `0.0.0.0/0`).
+     - Pamiętaj: Security Groups są **stanowe (Stateful)**, więc ruch powrotny obsługiwany jest automatycznie. W przypadku NACL (bezstanowych) musisz pamiętać o portach efemerycznych na wyjściu.
