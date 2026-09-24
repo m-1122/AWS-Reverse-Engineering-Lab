@@ -1,6 +1,6 @@
 # AWS Reverse Engineering Lab (SAA-C03)
 
-Moje poligonowe laboratorium architektoniczne do nauki i przygotowania do certyfikatu AWS Solutions Architect Associate (SAA-C03). Zamiast suchej teorii – praktyczne case studies: problem, architektura, konfiguracja i wnioski.
+> **Filozofia projektu:** Zamiast bezmyślnie klikać tutoriale AWS, podchodzę do chmury jak analityk bezpieczeństwa i architekt. Każdy moduł to inżynieria wsteczna realnych problemów produkcyjnych: **Symptom -> Dekonstrukcja układu -> Diagnoza wąskiego gardła -> Re-engineering (Optymalizacja / Poprawka).**
 
 ## 📂 Struktura Repozytorium
 
