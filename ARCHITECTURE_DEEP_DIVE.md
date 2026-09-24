@@ -68,14 +68,14 @@ Najpierw pytam, jak często dane są używane i jak szybko muszą wrócić. Dane
 
 Jeśli wzorzec dostępu jest nieznany lub zmienny, wybieram S3 Intelligent-Tiering. Usługa monitoruje użycie i przenosi obiekty między warstwami dostępu; pobieranie z podstawowych warstw Intelligent-Tiering nie ma opłaty retrieval, ale obowiązuje mała opłata za monitoring i automatyzację.[^22][^23]
 
-Jeśli znam cykl życia danych, ustawiam Lifecycle Policy: po określonym czasie przejście do tańszej klasy, a po zakończeniu retencji usunięcie. Lifecycle automatyzuje zarówno zmianę klasy, jak i wygaszanie obiektów.[^24][^25]
+Jeśli znam cykl życia danych, ustawiam Lifecycle Policy: po określonym czasie przejście do tańszej klasy, a po zakończeniu retencji usunięcie. Lifecycle automatyzuje zarówno zmianę klasy, jak i wygaszanie obiektów.
 
 Zdanie do zapamiętania: znany wzorzec to Lifecycle, nieznany wzorzec to Intelligent-Tiering.
 
 Cross-Region Replication
-Widzę wymaganie kopii w drugim regionie, compliance albo regionalnego DR. Wybieram S3 Cross-Region Replication, włączam Versioning na obu bucketach i daję usłudze właściwą rolę IAM.[^26][^27]
+Widzę wymaganie kopii w drugim regionie, compliance albo regionalnego DR. Wybieram S3 Cross-Region Replication, włączam Versioning na obu bucketach i daję usłudze właściwą rolę IAM.
 
-Live replication kopiuje nowe obiekty asynchronicznie. Obiekty istniejące sprzed utworzenia reguły obsługuję przez S3 Batch Replication. Jeżeli wymagany jest przewidywalny czas, S3 Replication Time Control zapewnia SLA dla 99,99% nowych obiektów replikowanych w ciągu 15 minut.[^28][^29][^30]
+Live replication kopiuje nowe obiekty asynchronicznie. Obiekty istniejące sprzed utworzenia reguły obsługuję przez S3 Batch Replication. Jeżeli wymagany jest przewidywalny czas, S3 Replication Time Control zapewnia SLA dla 99,99% nowych obiektów replikowanych w ciągu 15 minut.
 
 Zdanie do zapamiętania: CRR potrzebuje Versioning po obu stronach; stare obiekty potrzebują Batch Replication.
 
@@ -83,22 +83,22 @@ Security i IAM
 Cross-account access
 Widzę konto produkcyjne i drugie konto, które potrzebuje dostępu do wybranego zasobu. Nie tworzę długoterminowego użytkownika z kluczem na koncie produkcyjnym. Tworzę rolę z trust policy, ograniczam permissions policy zgodnie z least privilege, a użytkownik lub workload z drugiego konta wykonuje AssumeRole przez STS.[^31][^32]
 
-STS wydaje krótkotrwałe poświadczenia, które wygasają. AWS zaleca preferowanie poświadczeń tymczasowych nad długoterminowymi kluczami, również dla ludzi i workloadów.[^33][^31]
+STS wydaje krótkotrwałe poświadczenia, które wygasają. AWS zaleca preferowanie poświadczeń tymczasowych nad długoterminowymi kluczami, również dla ludzi i workloadów.
 
 Zdanie do zapamiętania: Trust policy mówi, kto może wejść w rolę; permissions policy mówi, co ta rola może zrobić.
 
 Rola dla EC2
-Jeśli aplikacja na EC2 potrzebuje S3 lub DynamoDB, nie zapisuję AccessKeyId i SecretAccessKey w kodzie, .env ani repozytorium. Przypisuję instancji IAM Role przez instance profile, a SDK pobiera poświadczenia tymczasowe.[^34][^33]
+Jeśli aplikacja na EC2 potrzebuje S3 lub DynamoDB, nie zapisuję AccessKeyId i SecretAccessKey w kodzie, .env ani repozytorium. Przypisuję instancji IAM Role przez instance profile, a SDK pobiera poświadczenia tymczasowe.
 
 SCP
-SCP to guardrail w AWS Organizations. Nie przyznaje uprawnień; wyznacza maksymalny zakres tego, na co mogą pozwolić polityki IAM w kontach członkowskich. Jawne Deny blokuje akcję nawet wtedy, gdy lokalna polityka IAM ją dopuszcza.[^35][^36]
+SCP to guardrail w AWS Organizations. Nie przyznaje uprawnień; wyznacza maksymalny zakres tego, na co mogą pozwolić polityki IAM w kontach członkowskich. Jawne Deny blokuje akcję nawet wtedy, gdy lokalna polityka IAM ją dopuszcza.
 
-SCP obejmuje konta członkowskie, włącznie z ich root userami, ale nie ogranicza użytkowników ani ról w management account.[^35]
+SCP obejmuje konta członkowskie, włącznie z ich root userami, ale nie ogranicza użytkowników ani ról w management account.
 
 Zdanie do zapamiętania: IAM daje pozwolenie, SCP stawia sufit.
 
 Disaster Recovery
-Najpierw rozdzielam dwa pojęcia. RTO mówi, jak długo usługa może być niedostępna. RPO mówi, ile najnowszych danych można utracić.[^37][^38]
+Najpierw rozdzielam dwa pojęcia. RTO mówi, jak długo usługa może być niedostępna. RPO mówi, ile najnowszych danych można utracić.
 
 Potem układam strategie od najtańszej i najwolniejszej do najdroższej i najszybszej:
 
@@ -108,7 +108,7 @@ Pilot Light — dane i rdzeń systemu czekają w drugim regionie, ale resztę tr
 
 Warm Standby — pomniejszona, kompletna wersja systemu już działa i trzeba ją tylko skalować.
 
-Multi-Region Active/Active — oba regiony aktywnie obsługują ruch, więc RTO i RPO mogą być bliskie zeru, ale rosną koszt i złożoność.[^39][^40]
+Multi-Region Active/Active — oba regiony aktywnie obsługują ruch, więc RTO i RPO mogą być bliskie zeru, ale rosną koszt i złożoność.
 
 Skrót pamięciowy: backup buduję, pilot uruchamiam, warm skaluję, active/active już działa.
 
@@ -126,23 +126,22 @@ Publiczna podsieć ma trasę do IGW; prywatna wychodzi przez NAT.
 
 SG jest stateful; NACL jest stateless.
 
-ALB to warstwa 7; NLB to warstwa 4; GWLB to warstwa 3.[^12]
+ALB to warstwa 7; NLB to warstwa 4; GWLB to warstwa 3.
 
 ASG skaluje i odtwarza instancje; ALB rozdziela ruch.
 
-Multi-AZ chroni dostępność; Read Replica skaluje odczyt.[^16]
+Multi-AZ chroni dostępność; Read Replica skaluje odczyt.
 
-Spot jest tani, ale przerywalny.[^14]
+Spot jest tani, ale przerywalny.
 
-Lifecycle obsługuje znany cykl danych; Intelligent-Tiering zmienny wzorzec dostępu.[^25][^23]
+Lifecycle obsługuje znany cykl danych; Intelligent-Tiering zmienny wzorzec dostępu.
 
-CRR wymaga Versioning na obu bucketach.[^27]
+CRR wymaga Versioning na obu bucketach.
 
-IAM Role i STS dają dostęp tymczasowy; nie wkładam kluczy do kodu.[^31][^33]
+IAM Role i STS dają dostęp tymczasowy; nie wkładam kluczy do kodu.
+SCP nie nadaje praw; ogranicza maksymalne prawa.
 
-SCP nie nadaje praw; ogranicza maksymalne prawa.[^35]
-
-RTO to czas powrotu, a RPO to dopuszczalna utrata danych.[^38]
+RTO to czas powrotu, a RPO to dopuszczalna utrata danych.
 
 Test bez podglądania
 EC2 ma publiczne IP, ale połączenie kończy się timeoutem. Jakie elementy sprawdzam po kolei?
