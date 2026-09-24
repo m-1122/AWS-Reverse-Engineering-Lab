@@ -2,9 +2,9 @@ AWS Reverse Engineering Lab — SAA-C03
 Nie uczę się AWS przez bezmyślne klikanie. Widzę objaw, rozbieram architekturę na części, znajduję wąskie gardło i dobieram usługę, która usuwa konkretny problem. Na egzaminie nie pytam tylko: „Co robi ta usługa?”, ale przede wszystkim: „Jaki problem ona rozwiązuje i dlaczego pozostałe odpowiedzi są gorsze?”.
 
 Jak z tego korzystam
-Czytam jeden fragment na głos, zasłaniam tekst i odtwarzam go własnymi słowami. Samo ponowne czytanie daje mniej niż aktywne wydobywanie informacji z pamięci, a informacja zwrotna po odpowiedzi dodatkowo wzmacnia naukę.[^1][^2]
+Czytam jeden fragment na głos, zasłaniam tekst i odtwarzam go własnymi słowami. Samo ponowne czytanie daje mniej niż aktywne wydobywanie informacji z pamięci, a informacja zwrotna po odpowiedzi dodatkowo wzmacnia naukę.
 
-Czytanie na głos pomaga zapamiętać treść, ale nie gwarantuje jej zrozumienia, dlatego po każdym fragmencie odpowiadam na pytanie „dlaczego?”. Powtarzam materiał w odstępach, na przykład po jednym, trzech, siedmiu, czternastu i trzydziestu dniach; badania wspierają łączenie testowania się z nauką rozłożoną w czasie.[^3][^4][^5][^6]
+Czytanie na głos pomaga zapamiętać treść, ale nie gwarantuje jej zrozumienia, dlatego po każdym fragmencie odpowiadam na pytanie „dlaczego?”. Powtarzam materiał w odstępach, na przykład po jednym, trzech, siedmiu, czternastu i trzydziestu dniach; badania wspierają łączenie testowania się z nauką rozłożoną w czasie.
 
 Mój schemat myślenia
 Kiedy czytam zadanie SAA-C03, najpierw wyszukuję słowa-klucze. „Wysoka dostępność” oznacza, że system ma przetrwać awarię. „Skalowanie” oznacza obsłużenie większego ruchu. „Najniższy koszt” oznacza, że nie wybieram najmocniejszej usługi, tylko najtańszą usługę spełniającą wymagania. „Najmniej pracy administracyjnej” kieruje mnie w stronę usługi zarządzanej.
@@ -15,23 +15,23 @@ Networking i VPC
 Timeout do EC2
 Widzę ERR_CONNECTION_TIMED_OUT do instancji EC2 z publicznym adresem IP. Nie zakładam od razu, że winna jest aplikacja. Idę po ścieżce pakietu: adres publiczny → tabela routingu → Internet Gateway → Security Group → NACL → usługa i port na EC2.
 
-Najpierw sprawdzam, czy podsieć ma trasę 0.0.0.0/0 do Internet Gateway i czy brama jest podłączona do właściwego VPC. Potem sprawdzam Security Group, czyli zaporę stanową przy interfejsie sieciowym, oraz NACL, czyli bezstanową zaporę podsieci, w której trzeba uwzględnić oba kierunki ruchu.[^7][^8][^9]
+Najpierw sprawdzam, czy podsieć ma trasę 0.0.0.0/0 do Internet Gateway i czy brama jest podłączona do właściwego VPC. Potem sprawdzam Security Group, czyli zaporę stanową przy interfejsie sieciowym, oraz NACL, czyli bezstanową zaporę podsieci, w której trzeba uwzględnić oba kierunki ruchu.
 
 Zdanie do zapamiętania: publiczny adres IP nie robi z podsieci publicznej; robi to trasa do Internet Gateway.
 
 NAT Gateway
-Widzę prywatną instancję, która ma pobierać aktualizacje z internetu, ale internet nie może inicjować połączeń do tej instancji. Myślę: NAT Gateway. Umieszczam go w publicznej podsieci, a w tabeli routingu prywatnej podsieci ustawiam 0.0.0.0/0 → NAT Gateway; publiczna podsieć NAT-u musi mieć trasę do Internet Gateway.[^10][^11]
+Widzę prywatną instancję, która ma pobierać aktualizacje z internetu, ale internet nie może inicjować połączeń do tej instancji. Myślę: NAT Gateway. Umieszczam go w publicznej podsieci, a w tabeli routingu prywatnej podsieci ustawiam 0.0.0.0/0 → NAT Gateway; publiczna podsieć NAT-u musi mieć trasę do Internet Gateway.
 
 NAT Gateway jest zasobem strefowym, więc architektura odporna na awarię strefy używa NAT Gateway w każdej używanej AZ i kieruje prywatne podsieci do NAT-u w ich własnej AZ. Na egzaminie pamiętam prosty obraz: prywatna instancja wychodzi przez NAT, ale świat nie wchodzi przez NAT do instancji.
 
 SG kontra NACL
-Security Group działa przy ENI i jest stanowa: jeśli dopuściłem żądanie, odpowiedź może wrócić automatycznie. NACL działa na granicy podsieci i jest bezstanowa: reguły muszą pasować osobno do ruchu przychodzącego i wychodzącego.[^8][^9]
+Security Group działa przy ENI i jest stanowa: jeśli dopuściłem żądanie, odpowiedź może wrócić automatycznie. NACL działa na granicy podsieci i jest bezstanowa: reguły muszą pasować osobno do ruchu przychodzącego i wychodzącego.
 
 Skrót pamięciowy: SG pamięta, NACL nie pamięta.
 
 Compute i skalowanie
 ALB, NLB i GWLB
-Jeśli zadanie mówi o HTTP, HTTPS, hostach, nagłówkach albo ścieżkach takich jak /api, wybieram ALB, bo działa w warstwie 7. Jeśli liczy się TCP, UDP, TLS i bardzo wysoka wydajność warstwy transportowej, wybieram NLB, czyli warstwę 4. Jeśli ruch ma przechodzić przez wirtualne firewalle lub inne urządzenia bezpieczeństwa, wybieram GWLB, czyli warstwę 3.[^12]
+Jeśli zadanie mówi o HTTP, HTTPS, hostach, nagłówkach albo ścieżkach takich jak /api, wybieram ALB, bo działa w warstwie 7. Jeśli liczy się TCP, UDP, TLS i bardzo wysoka wydajność warstwy transportowej, wybieram NLB, czyli warstwę 4. Jeśli ruch ma przechodzić przez wirtualne firewalle lub inne urządzenia bezpieczeństwa, wybieram GWLB, czyli warstwę 3.
 
 Skrót pamięciowy: ALB rozumie aplikację, NLB przenosi połączenia, GWLB prowadzi ruch przez appliance bezpieczeństwa.
 
