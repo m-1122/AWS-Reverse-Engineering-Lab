@@ -43,22 +43,21 @@ ALB wysyła ruch tylko do zdrowych celów, a ASG utrzymuje zadaną liczbę insta
 EC2 Spot
 Spot wybieram dla pracy odpornej na przerwanie: batch processing, CI/CD, analityka albo bezstanowe workery. Nie zapisuję ważnego stanu wyłącznie na instancji, bo EC2 może odzyskać pojemność; ostrzeżenie o przerwaniu zwykle daje do dwóch minut, ale aplikacja powinna działać poprawnie nawet bez skutecznego ostrzeżenia.[^13][^14]
 
-Łączę różne typy instancji i różne AZ w ASG, włączam Capacity Rebalancing, dzielę zadania na małe części, a pracę trzymam w SQS. Gdy worker znika, ASG tworzy następcę, a niedokończone zadanie może zostać przetworzone ponownie.[^15][^13]
+Łączę różne typy instancji i różne AZ w ASG, włączam Capacity Rebalancing, dzielę zadania na małe części, a pracę trzymam w SQS. Gdy worker znika, ASG tworzy następcę, a niedokończone zadanie może zostać przetworzone ponownie.
 
 Zdanie do zapamiętania: Spot obniża koszt, ale odporność na przerwanie musi zapewnić architektura.
 
 Bazy danych
 Multi-AZ kontra Read Replica
-Jeśli problemem jest awaria bazy albo całej AZ, wybieram RDS Multi-AZ. Primary replikuje synchronicznie do standby w innej AZ, a AWS wykonuje automatyczny failover; klasyczny standby nie służy do obsługi zwykłych zapytań odczytu.[^16][^17]
+Jeśli problemem jest awaria bazy albo całej AZ, wybieram RDS Multi-AZ. Primary replikuje synchronicznie do standby w innej AZ, a AWS wykonuje automatyczny failover; klasyczny standby nie służy do obsługi zwykłych zapytań odczytu.
 
-Jeśli problemem są tysiące zapytań SELECT, wybieram Read Replica. Replikacja jest asynchroniczna, replika może mieć opóźnienie i aplikacja musi jawnie kierować do niej odczyty.[^18][^16]
+Jeśli problemem są tysiące zapytań SELECT, wybieram Read Replica. Replikacja jest asynchroniczna, replika może mieć opóźnienie i aplikacja musi jawnie kierować do niej odczyty.
 
-Skrót pamięciowy: Multi-AZ = availability, Read Replica = read scalability. Te mechanizmy można połączyć, bo baza Multi-AZ może mieć Read Replicas.[^16]
+Skrót pamięciowy: Multi-AZ = availability, Read Replica = read scalability. Te mechanizmy można połączyć, bo baza Multi-AZ może mieć Read Replicas.
 
 Aurora Serverless v2
-Widzę nieprzewidywalne skoki ruchu i bazę, która przez większość czasu marnuje przydzieloną moc. Myślę o Aurora Serverless v2, gdzie writer i reader skalują pojemność w ACU, nawet w krokach po 0,5 ACU, zamiast wymagać ręcznej zmiany całej klasy instancji.[^19][^20]
-
-Jeśli wiele funkcji Lambda otwiera krótkie połączenia do bazy, dokładam RDS Proxy. Proxy utrzymuje pulę połączeń, poprawia odporność i ogranicza presję wywieraną przez nagły napływ nowych połączeń.[^21]
+Widzę nieprzewidywalne skoki ruchu i bazę, która przez większość czasu marnuje przydzieloną moc. Myślę o Aurora Serverless v2, gdzie writer i reader skalują pojemność w ACU, nawet w krokach po 0,5 ACU, zamiast wymagać ręcznej zmiany całej klasy instancji.
+Jeśli wiele funkcji Lambda otwiera krótkie połączenia do bazy, dokładam RDS Proxy. Proxy utrzymuje pulę połączeń, poprawia odporność i ogranicza presję wywieraną przez nagły napływ nowych połączeń.
 
 Zdanie do zapamiętania: Aurora Serverless skaluje moc bazy, a RDS Proxy kontroluje połączenia do bazy.
 
@@ -66,7 +65,7 @@ S3 i backup
 Klasy pamięci
 Najpierw pytam, jak często dane są używane i jak szybko muszą wrócić. Dane gorące trafiają do S3 Standard. Dane rzadkie, ale potrzebne natychmiast, pasują do Standard-IA lub Glacier Instant Retrieval. Długoterminowe archiwum, którego nie trzeba odzyskać natychmiast, kieruję do Glacier Flexible Retrieval albo Deep Archive.
 
-Jeśli wzorzec dostępu jest nieznany lub zmienny, wybieram S3 Intelligent-Tiering. Usługa monitoruje użycie i przenosi obiekty między warstwami dostępu; pobieranie z podstawowych warstw Intelligent-Tiering nie ma opłaty retrieval, ale obowiązuje mała opłata za monitoring i automatyzację.[^22][^23]
+Jeśli wzorzec dostępu jest nieznany lub zmienny, wybieram S3 Intelligent-Tiering. Usługa monitoruje użycie i przenosi obiekty między warstwami dostępu; pobieranie z podstawowych warstw Intelligent-Tiering nie ma opłaty retrieval, ale obowiązuje mała opłata za monitoring i automatyzację.
 
 Jeśli znam cykl życia danych, ustawiam Lifecycle Policy: po określonym czasie przejście do tańszej klasy, a po zakończeniu retencji usunięcie. Lifecycle automatyzuje zarówno zmianę klasy, jak i wygaszanie obiektów.
 
