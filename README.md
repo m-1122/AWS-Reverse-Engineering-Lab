@@ -1,6 +1,10 @@
 # AWS Reverse Engineering Lab (SAA-C03)
 
 > **Filozofia projektu:** Zamiast bezmyślnie klikać tutoriale AWS, podchodzę do chmury jak analityk bezpieczeństwa i architekt. Każdy moduł to inżynieria wsteczna realnych problemów produkcyjnych: **Symptom -> Dekonstrukcja układu -> Diagnoza wąskiego gardła -> Re-engineering (Optymalizacja / Poprawka).**
+>## 🧠 Metodologia Nauki (Active Recall)
+To repozytorium nie jest pasywną bazą wiedzy do czytania. Zasada pracy:
+* Jeśli odpowiedź na problem architektoniczny nie wychodzi bez patrzenia, **nie czytaj całej notatki od nowa**.
+* Odsłoń tylko brakujący fragment, zamknij go i spróbuj odtworzyć tok myślenia jeszcze raz.
 
 ## 📂 Struktura Repozytorium
 
