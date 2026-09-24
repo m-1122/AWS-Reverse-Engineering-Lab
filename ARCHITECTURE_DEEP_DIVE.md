@@ -167,4 +167,4 @@ Jaka jest różnica między RTO i RPO?
 
 Która strategia DR wymaga po awarii budowania, która uruchamiania, która skalowania, a która działa od razu?
 
-Jeśli odpowiedź nie wychodzi bez patrzenia, nie czytam całej notatki ponownie. Odsłaniam tylko brakujący fragment, zamykam go i od razu odpowiadam jeszcze raz. To zamienia README z tekstu do oglądania w trening aktywnego przypominania
+Jeśli odpowiedź nie wychodzi bez patrzenia, nie czytam całej notatki ponownie. Odsłaniam tylko brakujący fragment, zamykam go i od razu odpowiadam jeszcze raz. To zamienia README z tekstu do oglądania w trening aktywnego przypominania.
